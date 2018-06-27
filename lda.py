@@ -14,34 +14,36 @@ doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
 from nltk.tokenize import RegexpTokenizer
 import nltk.tokenize as tokenize
 tokenizer = RegexpTokenizer('\w+')
-
+# 文本转换为小写，同时分词
 raw = ly_dear_mama.lower()
 tokens = tokenizer.tokenize(raw)
 
-#print(tokens)
-
 from stop_words import get_stop_words
-
+# 文本剔除掉停用词
 en_stop = get_stop_words('en')
 stopped_tokens = [i for i in tokens if not i in en_stop]
 #print(stopped_tokens)
 
 from nltk.stem.porter import PorterStemmer
-
+# 提取词干
 p_stemmer = PorterStemmer()
 texts = [p_stemmer.stem(i) for i in stopped_tokens]
 
 #print(texts)
 from gensim import corpora, models
+# 制作词典
 dictionary = corpora.Dictionary([texts])
 #print(dictionary.token2id)
-
-corpus = [text for text in texts]
-# print(corpus)
-# corpus = [dictionary.doc2bow(text) for text in texts]
+# 制作语料库
 corpus = [dictionary.doc2bow(texts)]
-#print(corpus[0])
+# print(corpus[0])
 import gensim
 ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=3, id2word=dictionary, passes=20)
 
 print(ldamodel.print_topics(num_topics=3, num_words=10))
+
+
+"""
+ref:
+https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html
+"""
